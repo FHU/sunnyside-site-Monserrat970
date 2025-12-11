@@ -16,6 +16,16 @@
   <style>
     .attribution { font-size: 11px; text-align: center; }
     .attribution a { color: hsl(228, 45%, 44%); }
+    .mobile-menu::before {
+      content: "";
+      position: absolute;
+      top: -12px;
+      right: 1.5rem;
+      width: 24px;
+      height: 24px;
+      transform: rotate(45deg);
+      background: white;
+    }
   </style>
 </head>
 <body class="bg-white font-body text-slate-700">
@@ -25,20 +35,42 @@
     </a>
 
     <nav class="hidden items-center gap-8 text-lg md:flex">
-      <a href="#" class="transition-colors hover:text-white/80">About</a>
-      <a href="#" class="transition-colors hover:text-white/80">Services</a>
-      <a href="#" class="transition-colors hover:text-white/80">Projects</a>
+      <a href="#about" class="transition-colors hover:text-white/80">About</a>
+      <a href="#services" class="transition-colors hover:text-white/80">Services</a>
+      <a href="#projects" class="transition-colors hover:text-white/80">Projects</a>
       <a
-        href="#"
+        href="#contact"
         class="rounded-full bg-white px-6 py-3 text-xs font-headings font-bold uppercase tracking-[0.25em] text-slate-900 transition-colors hover:bg-[#6eceff] hover:text-white"
       >
         Contact
       </a>
     </nav>
 
-    <button class="md:hidden" aria-label="Open navigation">
+    <button
+      class="md:hidden"
+      aria-label="Toggle navigation"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      data-menu-button
+      type="button"
+    >
       <img src="images/icon-hamburger.svg" alt="" class="h-5 w-5" />
     </button>
+
+    <div
+      id="mobile-menu"
+      class="mobile-menu absolute left-6 right-6 top-[86px] hidden flex-col gap-6 rounded-md bg-white px-6 py-8 text-center text-slate-600 shadow-2xl md:hidden"
+    >
+      <a href="#about" class="text-lg font-semibold transition-colors hover:text-slate-400">About</a>
+      <a href="#services" class="text-lg font-semibold transition-colors hover:text-slate-400">Services</a>
+      <a href="#projects" class="text-lg font-semibold transition-colors hover:text-slate-400">Projects</a>
+      <a
+        href="#contact"
+        class="mx-auto inline-block rounded-full bg-yellow-500 px-6 py-3 font-headings text-xs font-black uppercase tracking-[0.25em] text-slate-900 transition-colors hover:bg-[#6eceff] hover:text-white"
+      >
+        Contact
+      </a>
+    </div>
   </header>
 
   <section
@@ -54,7 +86,7 @@
   </section>
 
   <main>
-    <section class="grid grid-cols-1 md:grid-cols-2">
+    <section id="about" class="grid grid-cols-1 md:grid-cols-2">
       <div class="order-2 flex items-center bg-white px-6 py-16 md:order-1 md:px-16 md:py-24 lg:px-28">
         <div class="space-y-6 md:space-y-8">
           <h2 class="font-headings text-3xl font-black text-slate-900 md:text-4xl">Transform your brand</h2>
@@ -74,7 +106,7 @@
       <div class="order-1 min-h-[320px] bg-cover bg-center bg-[url('images/mobile/image-transform.jpg')] md:order-2 md:min-h-full md:bg-[url('images/desktop/image-transform.jpg')]"></div>
     </section>
 
-    <section class="grid grid-cols-1 md:grid-cols-2">
+    <section id="services" class="grid grid-cols-1 md:grid-cols-2">
       <div class="min-h-[320px] bg-cover bg-center bg-[url('images/mobile/image-stand-out.jpg')] md:min-h-full md:bg-[url('images/desktop/image-stand-out.jpg')]"></div>
       <div class="flex items-center bg-white px-6 py-16 md:px-16 md:py-24 lg:px-28">
         <div class="space-y-6 md:space-y-8">
@@ -161,7 +193,7 @@
       </div>
     </section>
 
-    <section class="grid grid-cols-2 md:grid-cols-4">
+    <section id="projects" class="grid grid-cols-2 md:grid-cols-4">
       <picture>
         <source media="(min-width: 768px)" srcset="images/desktop/image-gallery-milkbottles.jpg" />
         <img src="images/mobile/image-gallery-milkbottles.jpg" alt="Milk bottles" class="h-full w-full object-cover" />
@@ -181,7 +213,7 @@
     </section>
   </main>
 
-  <footer class="bg-[#90d4c5] px-6 py-16 text-center md:py-20">
+  <footer id="contact" class="bg-[#90d4c5] px-6 py-16 text-center md:py-20">
     <div class="flex flex-col items-center gap-8">
       <img src="images/logo.svg" alt="Sunnyside" class="h-6 w-auto opacity-80" />
       <div class="flex items-center gap-10 text-sm font-semibold text-[#25564b]">
@@ -205,6 +237,54 @@
       </div>
     </div>
   </footer>
+
+  <script>
+    const menuButton = document.querySelector("[data-menu-button]");
+    const mobileMenu = document.getElementById("mobile-menu");
+
+    if (menuButton && mobileMenu) {
+      const closeMenu = () => {
+        mobileMenu.classList.add("hidden");
+        menuButton.setAttribute("aria-expanded", "false");
+      };
+
+      const openMenu = () => {
+        mobileMenu.classList.remove("hidden");
+        menuButton.setAttribute("aria-expanded", "true");
+      };
+
+      menuButton.addEventListener("click", () => {
+        const isOpen = !mobileMenu.classList.contains("hidden");
+        if (isOpen) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      document.addEventListener("click", (event) => {
+        const isOpen = !mobileMenu.classList.contains("hidden");
+        if (!isOpen) return;
+
+        const target = event.target;
+        const clickedInsideMenu = mobileMenu.contains(target);
+        const clickedButton = menuButton.contains(target);
+        if (!clickedInsideMenu && !clickedButton) {
+          closeMenu();
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeMenu();
+        }
+      });
+
+      mobileMenu.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", closeMenu);
+      });
+    }
+  </script>
 
   <div class="attribution">
     Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>.
